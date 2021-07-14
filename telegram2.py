@@ -2,7 +2,7 @@ import telebot
 import sqlite3
 from sqlite3 import Error
 import random, time
-import mnogochlen
+#import mnogochlen
 #import weather2fromweathermap
 bot = telebot.TeleBot('1836713851:AAHnJhLnZX-aFlDlh5om8a1iPLIvXtbFxHI')
 #======================================================
