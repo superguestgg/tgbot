@@ -2,8 +2,7 @@ import telebot
 import sqlite3
 from sqlite3 import Error
 import random, time
-#import mnogochlen
-#import weather2fromweathermap
+import weather2fromweathermap
 bot = telebot.TeleBot('1836713851:AAHnJhLnZX-aFlDlh5om8a1iPLIvXtbFxHI')
 #======================================================
 def create_connection(path):
@@ -45,6 +44,21 @@ def execute_read_query(connection, query):
 
         
 #==========================sqlite ended=========
+"""button_hi = KeyboardButton('Привет! 👋')
+
+greet_kb = ReplyKeyboardMarkup()
+greet_kb.add(button_hi)
+button_list = [
+    InlineKeyboardButton("col1", callback_data=...),
+    InlineKeyboardButton("col2", callback_data=...),
+    InlineKeyboardButton("row 2", callback_data=...)
+]
+
+# сборка клавиатуры из кнопок `InlineKeyboardButton`
+reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
+# отправка клавиатуры в чат
+bot.send_message(chat_id=chat_id, text="Меню из двух столбцов", reply_markup=reply_markup)
+"""
 def isadmin(userid):
     connection = create_connection("telegram1bot.sqlite")
     select_users = "SELECT * from users where id="+str(userid)+";"
@@ -56,10 +70,15 @@ def isadmin(userid):
         return True
     else:
         return False
+    
 @bot.message_handler(commands=['start'])
-def send_welcome(message):
+def start_message(message):
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard.row('/help')
+    bot.send_message(message.chat.id, 'Привет!', reply_markup=keyboard)
+    
     bot.reply_to(message, f'Я бот. Приятно познакомиться, {message.from_user.first_name}')
-    bot.send_message(message.from_user.id, 'используй /help чтобы узнать все возможности')
+    bot.send_message(message.chat.id, 'используй /help чтобы узнать все возможности')
     print(message.from_user.id)
     newuser='insert into users values('+str(message.from_user.id)+',"'+message.from_user.first_name+'","user");'
     connection = create_connection("telegram1bot.sqlite")
@@ -67,16 +86,29 @@ def send_welcome(message):
     execute_query(connection, newuser)
 @bot.message_handler(commands=['help'])
 def send_help(message):
-    bot.reply_to(message, 'команды: /start, /help, /mathhelp')
+    bot.reply_to(message, 'команды: /start, /help, /mathhelp, /keyboard')
     bot.reply_to(message, 'запросы: привет, помоги с математикой, рандом, рандомное число от m до n, погода')
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard.row('погода','погода на 5 дней','рандом','рандомное число','матеша')
+    bot.send_message(message.chat.id, 'used /keyboard', reply_markup=keyboard)
+@bot.message_handler(commands=['keyboard'])
+def send_help(message):
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard.row('погода','погода на 5 дней','рандом','рандомное число','матеша')
+    bot.send_message(message.chat.id, 'used /keyboard', reply_markup=keyboard)
+     
 @bot.message_handler(commands=['mathhelp'])
 def send_mathhelp(message):
     bot.reply_to(message, 'используй слово матеша в начале сообщения')
-@bot.message_handler(commands=['mnogochlen'])
-def mnogochlen(message):
-    bot.reply_to(message, 'hello, my king')
+@bot.message_handler(commands=['admin'])
+def admin(message):
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard.row('/showallusers','/makerepository','/writeinrepository','/deletefromrepository','/showrepository')
+    
+    bot.send_message(message.chat.id, 'hello, my king, commands:', reply_markup=keyboard)
     upgradeuser='UPDATE users set rights="admin" where id="'+str(message.from_user.id)+'";'
     connection = create_connection("telegram1bot.sqlite")
+    
 @bot.message_handler(commands=['showallusers'])
 def showallusers(message):
     if isadmin(message.from_user.id)==True:
@@ -129,25 +161,44 @@ def showrepository(message):
         show_repository = "select * from userrepository"+str(message.from_user.id)+";"
         repository=execute_read_query(connection, show_repository)
         bot.send_message(message.from_user.id,str(repository)+'v')
+@bot.message_handler(commands=['test'])
+def start_message(message):
+    markup = telebot.types.InlineKeyboardMarkup()
+    markup.add(telebot.types.InlineKeyboardButton(text='Три', callback_data=3))
+    markup.add(telebot.types.InlineKeyboardButton(text='Четыре', callback_data=4))
+    markup.add(telebot.types.InlineKeyboardButton(text='Пять', callback_data=5))
+    bot.send_message(message.chat.id, text="Какая средняя оценка была у Вас в школе?", reply_markup=markup)
 
+    
 @bot.message_handler(content_types=['audio'])
 def send_the_fuck(message):
     bot.send_message(message.from_user.id,'шо за хуйня')
-
+now1=''
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    if message.text.lower() == 'привет': 
+    global now1
+    if now1=='рандомное число':
+        thismessage=(message.text.lower()).split(' ')
+        minint=''
+        maxint=''
+        
+        for i in range (len(thismessage)):
+            if thismessage[i].isdigit():
+                if minint=='':
+                    minint=int(thismessage[i])
+                else :
+                    maxint=int(thismessage[i])
+        if minint>maxint:
+            minint,maxint=int(maxint),int(minint)
+            
+        bot.send_message(message.from_user.id, random.randint(minint, maxint))
+        now1=''
+    elif message.text.lower() == 'привет': 
         bot.send_message(message.from_user.id, 'Привет!')
-    """elif message.text.lower() in ('погода', 'погода в екатеринбурге', 'weather', 'weather in ekaterinburg'):
+    elif message.text.lower() in ('погода', 'погода в екатеринбурге', 'weather', 'weather in ekaterinburg'):
         bot.send_message(message.from_user.id, weather2fromweathermap.weathernow('Ekaterinburg,RU'))
     elif message.text.lower() in ('погода завтра', 'погода на завтра', 'погода на 5 дней', 'погода в екатеринбурге на завтра', 'weather tomorrow', 'weather in ekaterinburg tomorrow'):
-        bot.send_message(message.from_user.id, weather2fromweathermap.weathertomorrow('Ekaterinburg,RU'))"""
-    elif message.text.lower().count('матеша')>0:
-        try:
-            bot.send_message(message.from_user.id, mnogochlen.mix((message.text.lower()).replace('матеша', '')))
-        except Exception as e:
-            bot.send_message(message.from_user.id, str(e))
-            
+        bot.send_message(message.from_user.id, weather2fromweathermap.weathertomorrow('Ekaterinburg,RU'))            
     elif message.text.lower() == 'помоги с математикой':
         bot.send_message(message.from_user.id, 'без проблем, что ты хочешь, узнай больше с помощью /mathhelp')
     elif message.text.lower() in ('рандом', 'сгенерируй рандомное число от 0 до 1'):
@@ -167,7 +218,11 @@ def get_text_messages(message):
             minint,maxint=int(maxint),int(minint)
             
         bot.send_message(message.from_user.id, random.randint(minint, maxint))
+    elif (message.text.lower()).count('рандомное число')>0:
+        now1='рандомное число'
+        bot.reply_to(message,'определите границы для чисел')
     else:
         bot.send_message(message.from_user.id, 'Не понимаю, что это значит.')
 bot.polling(none_stop=True)
 #'сгенерируй рандомную цифру'
+
