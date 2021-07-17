@@ -195,11 +195,7 @@ def get_text_messages(message):
         bot.send_message(message.from_user.id, random.randint(minint, maxint))
         now1=''
     elif message.text.lower() == 'привет': 
-        bot.send_message(message.from_user.id, 'Привет!')
-    """elif message.text.lower() in ('погода', 'погода в екатеринбурге', 'weather', 'weather in ekaterinburg'):
-        bot.send_message(message.from_user.id, weather2fromweathermap.weathernow('Ekaterinburg,RU'))
-    elif message.text.lower() in ('погода завтра', 'погода на завтра', 'погода на 5 дней', 'погода в екатеринбурге на завтра', 'weather tomorrow', 'weather in ekaterinburg tomorrow'):
-        bot.send_message(message.from_user.id, weather2fromweathermap.weathertomorrow('Ekaterinburg,RU'))"""            
+        bot.send_message(message.from_user.id, 'Привет!')           
     elif message.text.lower() == 'помоги с математикой':
         bot.send_message(message.from_user.id, 'без проблем, что ты хочешь, узнай больше с помощью /mathhelp')
     elif message.text.lower() in ('рандом', 'сгенерируй рандомное число от 0 до 1'):
