@@ -108,6 +108,7 @@ def admin(message):
     bot.send_message(message.chat.id, 'hello, my king, commands:', reply_markup=keyboard)
     upgradeuser='UPDATE users set rights="admin" where id="'+str(message.from_user.id)+'";'
     connection = create_connection("telegram1bot.sqlite")
+    execute_query(connection, upgradeuser)
     
 @bot.message_handler(commands=['showallusers'])
 def showallusers(message):
