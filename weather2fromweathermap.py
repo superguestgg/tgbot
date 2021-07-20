@@ -1,4 +1,4 @@
-"""import requests
+import requests
 #Ekaterinburg,RU    
 def weathernow(sity):
     s_city = sity
@@ -51,4 +51,4 @@ def weathertomorrow(sity):
     except Exception as e:
         returnthis+=str(e)
         pass
-    return returnthis"""
+    return returnthis
