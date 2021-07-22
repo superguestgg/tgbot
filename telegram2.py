@@ -130,7 +130,7 @@ def send_keyboard(message):
     
 @bot.message_handler(commands=['keyboardall'])
 def send_keyboard_of_all_users(message):
-    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     keyboard.add('погода','погода на 5 дней','рандом','рандомное число','матеша')
     if isuser2(message.from_user.id):
         keyboard.add('/makerepository','/writeinrepository','/deletefromrepository','/showrepository','/pasterepository')
@@ -163,8 +163,8 @@ def send_mathhelp(message):
     bot.reply_to(message, 'используй слово матеша в начале сообщения')
 @bot.message_handler(commands=['setmetoadmin'])
 def setmetoadmin(message):
-    keyboard = telebot.types.ReplyKeyboardMarkup(True)
-    keyboard.row('/showallusers','/makerepository','/writeinrepository','/deletefromrepository','/showrepository','/pasterepository')
+    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    keyboard.add('/showallusers','/makerepository','/writeinrepository','/deletefromrepository','/showrepository','/pasterepository')
     
     bot.send_message(message.chat.id, 'hello, my king, commands:', reply_markup=keyboard)
     upgradeuser='UPDATE users set rights="admin" where id="'+str(message.from_user.id)+'";'
@@ -172,9 +172,11 @@ def setmetoadmin(message):
     execute_query(connection, upgradeuser)
 @bot.message_handler(commands=['user2'])
 def upgradetouser2(message):
-    keyboard = telebot.types.ReplyKeyboardMarkup(True)
-    keyboard.row('/makerepository','/writeinrepository','/deletefromrepository','/showrepository','/pasterepository')
+    keyboard = telebot.types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    keyboard.add('/makerepository','/writeinrepository','/deletefromrepository','/showrepository','/pasterepository')
     bot.send_message(message.chat.id, 'hello, you account was upgraded and your rights have been extended, commands:', reply_markup=keyboard)
+    bot.send_message(message.chat.id, '/makerepository, /writeinrepository, /deletefromrepository, /showrepository, /pasterepository')
+
     upgradeuser='UPDATE users set rights="user2" where id="'+str(message.from_user.id)+'";'
     connection = create_connection("telegram1bot.sqlite")
     execute_query(connection, upgradeuser)
