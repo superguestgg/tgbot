@@ -118,7 +118,7 @@ def send_help(message):
     bot.reply_to(message, 'команды: /start, /help, /mathhelp, /keyboard, /user2')
     bot.reply_to(message, 'запросы: привет, помоги с математикой, рандом, рандомное число от m до n, погода')
     keyboard = telebot.types.ReplyKeyboardMarkup(True)
-    keyboard.row('погода','погода на 5 дней','рандом','рандомное число','матеша')
+    keyboard.add('погода','погода на 5 дней','рандом','рандомное число','матеша')
     bot.send_message(message.chat.id, 'used /keyboard', reply_markup=keyboard)
 
     
@@ -127,6 +127,16 @@ def send_keyboard(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(True)
     keyboard.add('погода','погода на 5 дней','рандом','рандомное число','матеша')
     bot.send_message(message.chat.id, 'used /keyboard', reply_markup=keyboard)
+    
+@bot.message_handler(commands=['keyboardall'])
+def send_keyboard_of_all_users(message):
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard.add('погода','погода на 5 дней','рандом','рандомное число','матеша')
+    if isuser2(message.from_user.id):
+        keyboard.add('/makerepository','/writeinrepository','/deletefromrepository','/showrepository','/pasterepository')
+    if isadmin(message.from_user.id):
+        keyboard.add('/showallusers','/makerepository','/writeinrepository','/deletefromrepository','/showrepository','/pasterepository')
+    bot.send_message(message.chat.id, 'used /keyboardall', reply_markup=keyboard)
     
 @bot.message_handler(commands=['keyboarduser'])
 def send_keyboard_of_user(message):
@@ -246,7 +256,7 @@ def pasterepository(message):
                 print(thismessage[i])
                 thismessage[i]=thismessage[i].split(", '")
                 thismessage[i][1]=thismessage[i][1].replace("'","")
-                thismessage[i][2]=thismessage[i][1].replace("')","")
+                thismessage[i][2]=thismessage[i][2].replace("')","")
                 try:
                     connection = create_connection("telegram1bot.sqlite")
                     write_in_repository = "insert into userrepository"+str(message.from_user.id)+"(name, content) values('"+thismessage[i][1]+"', '"+thismessage[i][2]+"');"
