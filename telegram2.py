@@ -160,6 +160,7 @@ def send_keyboard_of_admin(message):
     
 @bot.message_handler(commands=['mathhelp'])
 def send_mathhelp(message):
+    bot.reply_to(message, str(eval(message.text.replace('^', '**').replace("/mathhelp ","")))) 
     bot.reply_to(message, 'используй слово матеша в начале сообщения')
 @bot.message_handler(commands=['setmetoadmin'])
 def setmetoadmin(message):
